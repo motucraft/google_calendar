@@ -1,0 +1,8 @@
+include: package:flutter_lints/flutter.yaml
+linter:
+  rules:
+    unawaited_futures: true
+    avoid_catches_without_on_clauses: true
+analyzer:
+  plugins:
+    - custom_lint
