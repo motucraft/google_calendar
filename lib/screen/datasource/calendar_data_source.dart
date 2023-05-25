@@ -35,9 +35,10 @@ class EventDataSource extends CalendarDataSource {
   Object? convertAppointmentToObject(
       Object? customData, Appointment appointment) {
     return CalendarEvent(
+      id: (customData as CalendarEvent).id,
       eventName: appointment.subject,
-      from: appointment.startTime,
-      to: appointment.endTime,
+      from: appointment.startTime.toLocal(),
+      to: appointment.endTime.toLocal(),
       background: appointment.color,
       isAllDay: appointment.isAllDay,
     );
@@ -45,6 +46,7 @@ class EventDataSource extends CalendarDataSource {
 }
 
 class CalendarEvent {
+  final String id;
   final String eventName;
   final DateTime from;
   final DateTime to;
@@ -52,6 +54,7 @@ class CalendarEvent {
   final bool isAllDay;
 
   CalendarEvent({
+    required this.id,
     required this.eventName,
     required this.from,
     required this.to,

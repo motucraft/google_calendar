@@ -6,20 +6,6 @@ part of 'providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$googleSignInHash() => r'db69ab57f890572b634d299227d35cf3d717b8f9';
-
-/// See also [googleSignIn].
-@ProviderFor(googleSignIn)
-final googleSignInProvider = AutoDisposeProvider<GoogleSignIn>.internal(
-  googleSignIn,
-  name: r'googleSignInProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$googleSignInHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef GoogleSignInRef = AutoDisposeProviderRef<GoogleSignIn>;
 String _$isAuthorizedHash() => r'0d4229243523cb7895b6a7d1a611d2c8b62ea1af';
 
 /// See also [IsAuthorized].
@@ -35,8 +21,40 @@ final isAuthorizedProvider =
 );
 
 typedef _$IsAuthorized = AutoDisposeNotifier<bool>;
+String _$isSigneInHash() => r'6958966aa37c281fa469cbdb44d6eee1a7b16da5';
+
+/// See also [IsSigneIn].
+@ProviderFor(IsSigneIn)
+final isSigneInProvider =
+    AutoDisposeAsyncNotifierProvider<IsSigneIn, bool>.internal(
+  IsSigneIn.new,
+  name: r'isSigneInProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$isSigneInHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$IsSigneIn = AutoDisposeAsyncNotifier<bool>;
+String _$googleSignInNotifierHash() =>
+    r'5a7c355bb7dc86dcaab705d4742546fd583f8ce6';
+
+/// See also [GoogleSignInNotifier].
+@ProviderFor(GoogleSignInNotifier)
+final googleSignInNotifierProvider =
+    AutoDisposeNotifierProvider<GoogleSignInNotifier, GoogleSignIn>.internal(
+  GoogleSignInNotifier.new,
+  name: r'googleSignInNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$googleSignInNotifierHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$GoogleSignInNotifier = AutoDisposeNotifier<GoogleSignIn>;
 String _$userControllerNotifierHash() =>
-    r'06683d13c619e7bfe4c5884ea94a49bfe68985fc';
+    r'70afb87527bc723287f37f81afc3dd210ecf9391';
 
 /// See also [UserControllerNotifier].
 @ProviderFor(UserControllerNotifier)
@@ -53,7 +71,24 @@ final userControllerNotifierProvider = AutoDisposeAsyncNotifierProvider<
 
 typedef _$UserControllerNotifier
     = AutoDisposeAsyncNotifier<GoogleSignInAccount?>;
-String _$calendarNotifierHash() => r'bf4268c601a44a0351748afef61003da29aae953';
+String _$authClientNotifierHash() =>
+    r'd98a77fb6b9021cc249e307df267ca5f4f27a675';
+
+/// See also [AuthClientNotifier].
+@ProviderFor(AuthClientNotifier)
+final authClientNotifierProvider =
+    AutoDisposeAsyncNotifierProvider<AuthClientNotifier, CalendarApi>.internal(
+  AuthClientNotifier.new,
+  name: r'authClientNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$authClientNotifierHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$AuthClientNotifier = AutoDisposeAsyncNotifier<CalendarApi>;
+String _$calendarNotifierHash() => r'906f3103db4599d37f8b16f63b0f9b234be70ad7';
 
 /// See also [CalendarNotifier].
 @ProviderFor(CalendarNotifier)

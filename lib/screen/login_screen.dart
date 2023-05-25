@@ -20,7 +20,8 @@ class LoginScreen extends HookConsumerWidget {
     logger.info('isAuthorized=$isAuthorized');
 
     useEffect(() {
-      ref.read(googleSignInProvider).signInSilently();
+      ref.read(googleSignInNotifierProvider.notifier).signInSilently();
+
       return null;
     }, []);
 
@@ -53,18 +54,18 @@ class LoginScreen extends HookConsumerWidget {
                 ),
                 const SizedBox(height: 24),
                 if (isAuthorized) ...[
-                  ElevatedButton(
-                    onPressed: () async => await ref
-                        .read(userControllerNotifierProvider.notifier)
-                        .handleGetContact(),
-                    child: const Text('REFRESH'),
-                  ),
+                  // ElevatedButton(
+                  //   onPressed: () async => await ref
+                  //       .read(userControllerNotifierProvider.notifier)
+                  //       .handleGetContact(),
+                  //   child: const Text('REFRESH'),
+                  // ),
                   const SizedBox(height: 8),
                   ElevatedButton(
                     onPressed: () async {
                       try {
                         final authenticatedClient = await ref
-                            .read(googleSignInProvider)
+                            .read(googleSignInNotifierProvider)
                             .authenticatedClient();
                         final calendarApi =
                             calendar.CalendarApi(authenticatedClient!);
@@ -73,6 +74,8 @@ class LoginScreen extends HookConsumerWidget {
                         events.items?.forEach((element) {
                           logger.info(element.id);
                           logger.info(element.summary);
+                          logger.info(element.start?.dateTime);
+                          logger.info(element.end?.dateTime);
                         });
 
                         if (context.mounted) {
@@ -91,17 +94,17 @@ class LoginScreen extends HookConsumerWidget {
                   ElevatedButton(
                     onPressed: () async {
                       final isAuthorized = await ref
-                          .read(googleSignInProvider)
+                          .read(googleSignInNotifierProvider)
                           .requestScopes(scopes);
                       ref
                           .read(isAuthorizedProvider.notifier)
                           .update(isAuthorized);
 
-                      if (isAuthorized) {
-                        await ref
-                            .read(userControllerNotifierProvider.notifier)
-                            .handleGetContact();
-                      }
+                      // if (isAuthorized) {
+                      //   await ref
+                      //       .read(userControllerNotifierProvider.notifier)
+                      //       .handleGetContact();
+                      // }
                     },
                     child: const Text('Request Permissions'),
                   ),
@@ -111,7 +114,7 @@ class LoginScreen extends HookConsumerWidget {
                 const SizedBox(height: 8),
                 ElevatedButton(
                   onPressed: () async =>
-                      await ref.read(googleSignInProvider).disconnect(),
+                      await ref.read(googleSignInNotifierProvider).disconnect(),
                   child: const Text('Sign out'),
                 ),
               ],
@@ -124,7 +127,7 @@ class LoginScreen extends HookConsumerWidget {
                 const SizedBox(height: 8),
                 buildSignInButton(
                   onPressed: () async =>
-                      await ref.read(googleSignInProvider).signIn(),
+                      await ref.read(googleSignInNotifierProvider).signIn(),
                 ),
               ],
             );
@@ -141,7 +144,7 @@ class LoginScreen extends HookConsumerWidget {
           logger.severe(stack);
           return const CircularProgressIndicator();
         },
-        loading: () => const CircularProgressIndicator(),
+        loading: () => const Center(child: CircularProgressIndicator()),
       ),
     );
   }
