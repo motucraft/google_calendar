@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../screen/calendar_screen.dart';
 import '../screen/login_screen.dart';
+import 'providers.dart';
 
 part 'routing_provider.g.dart';
 
@@ -25,6 +26,15 @@ GoRouter routing(RoutingRef ref) {
           GoRoute(
             path: 'calendar',
             name: 'calendar',
+            redirect: (_, __) {
+              final isSigneInAsyncValue = ref.read(isSigneInProvider);
+              if (isSigneInAsyncValue is AsyncData &&
+                  isSigneInAsyncValue.value == false) {
+                return '/';
+              }
+
+              return null;
+            },
             pageBuilder: (_, __) {
               return const MaterialPage(child: CalendarScreen());
             },

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_calendar/provider/providers.dart';
 import 'package:googleapis/calendar/v3.dart' as calendar;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -28,13 +27,6 @@ class CalendarScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final calendarNotifier = ref.watch(calendarNotifierProvider);
-
-    ref.listen(isSigneInProvider, (_, next) {
-      logger.info('next=$next');
-      if (next is AsyncData && next.value == false) {
-        context.goNamed('/');
-      }
-    });
 
     return Scaffold(
       appBar: AppBar(

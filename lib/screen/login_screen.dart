@@ -1,9 +1,7 @@
-import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:googleapis/calendar/v3.dart' as calendar;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../provider/providers.dart';
@@ -54,37 +52,9 @@ class LoginScreen extends HookConsumerWidget {
                 ),
                 const SizedBox(height: 24),
                 if (isAuthorized) ...[
-                  // ElevatedButton(
-                  //   onPressed: () async => await ref
-                  //       .read(userControllerNotifierProvider.notifier)
-                  //       .handleGetContact(),
-                  //   child: const Text('REFRESH'),
-                  // ),
                   const SizedBox(height: 8),
                   ElevatedButton(
-                    onPressed: () async {
-                      try {
-                        final authenticatedClient = await ref
-                            .read(googleSignInNotifierProvider)
-                            .authenticatedClient();
-                        final calendarApi =
-                            calendar.CalendarApi(authenticatedClient!);
-
-                        final events = await calendarApi.events.list('primary');
-                        events.items?.forEach((element) {
-                          logger.info(element.id);
-                          logger.info(element.summary);
-                          logger.info(element.start?.dateTime);
-                          logger.info(element.end?.dateTime);
-                        });
-
-                        if (context.mounted) {
-                          context.goNamed('calendar');
-                        }
-                      } on Exception catch (e) {
-                        logger.severe(e);
-                      }
-                    },
+                    onPressed: () => context.goNamed('calendar'),
                     child: const Text('カレンダー'),
                   ),
                 ],
@@ -99,12 +69,6 @@ class LoginScreen extends HookConsumerWidget {
                       ref
                           .read(isAuthorizedProvider.notifier)
                           .update(isAuthorized);
-
-                      // if (isAuthorized) {
-                      //   await ref
-                      //       .read(userControllerNotifierProvider.notifier)
-                      //       .handleGetContact();
-                      // }
                     },
                     child: const Text('Request Permissions'),
                   ),
