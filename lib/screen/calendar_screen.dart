@@ -32,6 +32,8 @@ class CalendarScreen extends HookConsumerWidget {
     final titleController = useTextEditingController();
     final calendarNotifier = ref.watch(calendarNotifierProvider);
 
+    final onDragStartEvent = useState<CalendarEvent?>(null);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Google Calendar with syncfusion_flutter_calendar'),
@@ -43,30 +45,57 @@ class CalendarScreen extends HookConsumerWidget {
           return SfCalendar(
             allowDragAndDrop: true,
             view: CalendarView.month,
+            allowedViews: const [
+              CalendarView.day,
+              CalendarView.week,
+              CalendarView.workWeek,
+              CalendarView.timelineDay,
+              CalendarView.timelineWeek,
+              CalendarView.timelineWorkWeek,
+              CalendarView.month,
+              CalendarView.schedule
+            ],
             dataSource: EventDataSource(items),
             monthViewSettings: const MonthViewSettings(
               appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
             ),
 
+            onDragStart:
+                (AppointmentDragStartDetails appointmentDragStartDetails) =>
+                    onDragStartEvent.value = appointmentDragStartDetails
+                        .appointment as CalendarEvent,
+
             // update calendar event
             onDragEnd:
                 (AppointmentDragEndDetails appointmentDragEndDetails) async {
-              final appointment =
-                  appointmentDragEndDetails.appointment as CalendarEvent;
               final droppingTime = appointmentDragEndDetails.droppingTime;
-              logger.info('onDragStart droppingTime=$droppingTime');
+
+              final dragStartEvent = onDragStartEvent.value!;
 
               final calendarApi =
                   await ref.read(authClientNotifierProvider.future);
 
               final eventRequest = calendar.Event();
               eventRequest.start = calendar.EventDateTime()
-                ..dateTime = appointment.from.toUtc();
+                ..dateTime = dragStartEvent.from
+                    .copyWith(
+                        year: droppingTime?.year,
+                        month: droppingTime?.month,
+                        day: droppingTime?.day)
+                    .toUtc();
               eventRequest.end = calendar.EventDateTime()
-                ..dateTime = appointment.to.toUtc();
+                ..dateTime = dragStartEvent.to
+                    .copyWith(
+                        year: droppingTime?.year,
+                        month: droppingTime?.month,
+                        day: droppingTime?.day)
+                    .toUtc();
 
               await calendarApi.events
-                  .patch(eventRequest, 'primary', appointment.id);
+                  .patch(eventRequest, 'primary', dragStartEvent.id);
+
+              onDragStartEvent.value = null;
+              ref.invalidate(calendarNotifierProvider);
             },
             onTap: (CalendarTapDetails calendarTapDetails) {
               showDialog(
@@ -90,10 +119,6 @@ class CalendarScreen extends HookConsumerWidget {
                           final title = titleController.text;
                           final selectedDate = calendarTapDetails.date!;
                           final selectedTime = ref.read(datePickerProvider);
-
-                          logger.info('title=$title');
-                          logger.info('selectedDate=$selectedDate');
-                          logger.info('selectedTime=$selectedTime');
 
                           final start = selectedDate.copyWith(
                               hour: selectedTime.hour,
