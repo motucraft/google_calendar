@@ -1,4 +1,4 @@
-# google_calendar with syncfusion_flutter_calendar
+# Google Calendar API with syncfusion_flutter_calendar
 
 
 
