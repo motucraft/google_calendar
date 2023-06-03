@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_calendar/provider/providers.dart';
 import 'package:googleapis/calendar/v3.dart' as calendar;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../util/logger.dart';
+import 'add_event_dialog_content.dart';
 import 'datasource/calendar_data_source.dart';
 
 const calendarColor = <String, Color>{
@@ -21,11 +24,12 @@ const calendarColor = <String, Color>{
   '11': Color(0xFFD50000),
 };
 
-class CalendarScreen extends ConsumerWidget {
+class CalendarScreen extends HookConsumerWidget {
   const CalendarScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final titleController = useTextEditingController();
     final calendarNotifier = ref.watch(calendarNotifierProvider);
 
     return Scaffold(
@@ -63,6 +67,66 @@ class CalendarScreen extends ConsumerWidget {
 
               await calendarApi.events
                   .patch(eventRequest, 'primary', appointment.id);
+            },
+            onTap: (CalendarTapDetails calendarTapDetails) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Add Event'),
+                    content: AddEventDialogContent(controller: titleController),
+                    actions: [
+                      ElevatedButton(
+                        onPressed: () => context.pop(),
+                        child: const Text('Cancel'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          if (titleController.text.isEmpty ||
+                              calendarTapDetails.date == null) {
+                            return;
+                          }
+
+                          final title = titleController.text;
+                          final selectedDate = calendarTapDetails.date!;
+                          final selectedTime = ref.read(datePickerProvider);
+
+                          logger.info('title=$title');
+                          logger.info('selectedDate=$selectedDate');
+                          logger.info('selectedTime=$selectedTime');
+
+                          final start = selectedDate.copyWith(
+                              hour: selectedTime.hour,
+                              minute: selectedTime.minute);
+
+                          final calendarApi =
+                              await ref.read(authClientNotifierProvider.future);
+                          final eventRequest = calendar.Event()
+                            ..summary = title;
+
+                          eventRequest.start = calendar.EventDateTime()
+                            ..dateTime = start.toUtc();
+                          eventRequest.end = calendar.EventDateTime()
+                            ..dateTime =
+                                start.add(const Duration(hours: 1)).toUtc();
+
+                          await calendarApi.events.insert(
+                            eventRequest,
+                            'primary',
+                          );
+
+                          ref.invalidate(calendarNotifierProvider);
+                          titleController.clear();
+                          if (context.mounted) {
+                            context.pop();
+                          }
+                        },
+                        child: const Text('Save'),
+                      ),
+                    ],
+                  );
+                },
+              );
             },
           );
         },

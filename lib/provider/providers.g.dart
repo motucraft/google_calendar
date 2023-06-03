@@ -37,7 +37,7 @@ final isSigneInProvider =
 
 typedef _$IsSigneIn = AutoDisposeAsyncNotifier<bool>;
 String _$googleSignInNotifierHash() =>
-    r'5a7c355bb7dc86dcaab705d4742546fd583f8ce6';
+    r'69ba8659fd6c534b3eac23eed220fe130d073c13';
 
 /// See also [GoogleSignInNotifier].
 @ProviderFor(GoogleSignInNotifier)
@@ -54,7 +54,7 @@ final googleSignInNotifierProvider =
 
 typedef _$GoogleSignInNotifier = AutoDisposeNotifier<GoogleSignIn>;
 String _$userControllerNotifierHash() =>
-    r'70afb87527bc723287f37f81afc3dd210ecf9391';
+    r'2791351416a5acb972f492c5f04e9c6bf03e5c05';
 
 /// See also [UserControllerNotifier].
 @ProviderFor(UserControllerNotifier)
@@ -72,7 +72,7 @@ final userControllerNotifierProvider = AutoDisposeAsyncNotifierProvider<
 typedef _$UserControllerNotifier
     = AutoDisposeAsyncNotifier<GoogleSignInAccount?>;
 String _$authClientNotifierHash() =>
-    r'd98a77fb6b9021cc249e307df267ca5f4f27a675';
+    r'd839af9ae14c35c6f357d571d08dae720c80deba';
 
 /// See also [AuthClientNotifier].
 @ProviderFor(AuthClientNotifier)
@@ -88,7 +88,7 @@ final authClientNotifierProvider =
 );
 
 typedef _$AuthClientNotifier = AutoDisposeAsyncNotifier<CalendarApi>;
-String _$calendarNotifierHash() => r'906f3103db4599d37f8b16f63b0f9b234be70ad7';
+String _$calendarNotifierHash() => r'5a3a34400e0cb32b8b6819d7f39df7397fb4e3de';
 
 /// See also [CalendarNotifier].
 @ProviderFor(CalendarNotifier)
